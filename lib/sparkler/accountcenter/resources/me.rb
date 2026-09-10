@@ -1,0 +1,48 @@
+# frozen_string_literal: true
+
+require "uri"
+
+module Sparkler
+  module AccountCenter
+    module Resources
+      # Current-user profile endpoints (Bearer user JWT / guest token).
+      # Responses are raw parsed JSON hashes.
+      class Me < Base
+        # GET /api/v1/me
+        def get
+          request_get("/api/v1/me")
+        end
+
+        # PATCH /api/v1/me — email/nickname/flag_style/password. Changing the
+        # password on an account that already has one requires current_password.
+        def update(email: nil, nickname: nil, flag_style: nil,
+                   password: nil, password_confirmation: nil, current_password: nil)
+          body = {}
+          body[:email] = email unless email.nil?
+          body[:nickname] = nickname unless nickname.nil?
+          body[:flag_style] = flag_style unless flag_style.nil?
+          body[:password] = password unless password.nil?
+          body[:password_confirmation] = password_confirmation unless password_confirmation.nil?
+          body[:current_password] = current_password unless current_password.nil?
+          request_patch("/api/v1/me", body: body)
+        end
+
+        # POST /api/v1/me/addresses — link a wallet address (see platform docs
+        # for the exact signature payload).
+        def create_address(params)
+          request_post("/api/v1/me/addresses", body: params)
+        end
+
+        # DELETE /api/v1/me/addresses/:id
+        def delete_address(id)
+          request_delete("/api/v1/me/addresses/#{URI.encode_www_form_component(id.to_s)}")
+        end
+
+        # DELETE /api/v1/me/identities/:id — unlink a social identity.
+        def delete_identity(id)
+          request_delete("/api/v1/me/identities/#{URI.encode_www_form_component(id.to_s)}")
+        end
+      end
+    end
+  end
+end
