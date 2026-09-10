@@ -71,7 +71,18 @@ user_client.withdrawals.create(amount: "100", dest: "0x已验证钱包地址")
 user_client.event_logs.list(round_id)
 ```
 
-SIWE 钱包登录：`public_client.game_tokens.challenge(address:, chain_id:)` 取挑战消息 → 钱包签名 → `public_client.auth.wallet(message:, signature:)` 或 `create_with_siwe` 直接换游戏票据。
+SIWE 钱包登录/绑定的完整流程（三处入口契约一致）：
+
+```ruby
+challenge = public_client.game_tokens.challenge(address: "0xabc…", chain_id: 84532)
+# => { "message" => "…EIP-4361 文本…", "ticket" => "…不透明防伪票据…" }
+signature = wallet_sign(challenge["message"])          # 钱包签的是 message 字段
+
+# 任选其一，提交的都是 { ticket, signature }（ticket 原样回传，不是 message）：
+public_client.game_tokens.create_with_siwe(ticket: challenge["ticket"], signature:)  # 直接换游戏票据
+public_client.auth.wallet(ticket: challenge["ticket"], signature:)                   # 登录/注册 → { token, user, game_token }
+user_client.me.create_address(ticket: challenge["ticket"], signature:)               # 已登录用户绑定钱包
+```
 
 ### 3. Webhook 接收（验签）与游戏票据验签
 

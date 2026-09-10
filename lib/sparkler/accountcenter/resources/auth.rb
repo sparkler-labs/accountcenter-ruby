@@ -21,10 +21,13 @@ module Sparkler
         end
 
         # SIWE wallet sign-in/registration → { token:, user:, game_token: }.
-        # `message` is the SIWE challenge message obtained from
-        # GameTokens#challenge (the platform parameter is named `ticket`).
-        def wallet(message:, signature:)
-          request_post("/api/v1/auth/wallet", body: { ticket: message, signature: signature })
+        #
+        # @param ticket [String] the OPAQUE ticket field from the
+        #   GameTokens#challenge response (not the SIWE message — the wallet
+        #   signs challenge["message"]; the platform recovers it from this ticket)
+        # @param signature [String] wallet signature over challenge["message"]
+        def wallet(ticket:, signature:)
+          request_post("/api/v1/auth/wallet", body: { ticket: ticket, signature: signature })
         end
 
         # Enabled social login providers (only those with full ENV credentials).

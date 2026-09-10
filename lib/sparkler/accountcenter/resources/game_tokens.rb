@@ -14,9 +14,14 @@ module Sparkler
         end
 
         # Fetch a ticket with a signed SIWE challenge (no session needed)...
-        # @return [Hash] includes "ticket"
-        def create_with_siwe(message:, signature:)
-          request_post("/api/v1/game_tokens", body: { ticket: message, signature: signature })
+        #
+        # @param ticket [String] the OPAQUE ticket field from the #challenge
+        #   response (not the SIWE message — the message is what the wallet
+        #   signs; the platform recovers the message from this ticket)
+        # @param signature [String] wallet signature over challenge["message"]
+        # @return [Hash] includes "ticket" (the 60s RS256 game ticket)
+        def create_with_siwe(ticket:, signature:)
+          request_post("/api/v1/game_tokens", body: { ticket: ticket, signature: signature })
         end
 
         # ...or with the caller's Bearer JWT (bearer-mode client).

@@ -27,10 +27,14 @@ module Sparkler
           request_patch("/api/v1/me", body: body)
         end
 
-        # POST /api/v1/me/addresses — link a wallet address (see platform docs
-        # for the exact signature payload).
-        def create_address(params)
-          request_post("/api/v1/me/addresses", body: params)
+        # POST /api/v1/me/addresses — link a wallet address via SIWE.
+        #
+        # @param ticket [String] the OPAQUE ticket field from the
+        #   GameTokens#challenge response (the wallet signs
+        #   challenge["message"]; the platform recovers it from this ticket)
+        # @param signature [String] wallet signature over challenge["message"]
+        def create_address(ticket:, signature:)
+          request_post("/api/v1/me/addresses", body: { ticket: ticket, signature: signature })
         end
 
         # DELETE /api/v1/me/addresses/:id
