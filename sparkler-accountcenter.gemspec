@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
                      "service funds APIs (holds/settlements/balances), user APIs, webhook " \
                      "signature verification and RS256 game ticket verification. " \
                      "Zero runtime dependencies (stdlib only: net/http, json, openssl)."
-  spec.homepage = "https://github.com/sparklerdao/minesweeper"
+  spec.homepage = "https://github.com/sparkler-labs/accountcenter-ruby"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1"
 
