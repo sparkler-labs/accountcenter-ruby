@@ -46,6 +46,14 @@ end
 
 # 开局批量拉权威余额（自动按 100 分批合并）
 balances = platform.balances.get(%w[9f1c2e-… user:7 0xabc…])  # => { "player" => "120.5", … }
+
+# 同应用内用户间转账（打赏、直接划转）：原子一借一贷，不经中间账户
+transfer = platform.transfers.create(
+  from_user: "payer-uuid", to_user: "payee-uuid",
+  amount: "25.5", reference: "tip:1001",
+  details: { reason: "tip" }
+)
+platform.transfers.by_reference("tip:1001")   # 对账/轮询
 ```
 
 ### 2. 用户接口（Bearer 用户 JWT / guest_token）
@@ -69,6 +77,12 @@ user_client.game_tokens.create                # Bearer JWT 换 60s 游戏 ticket
 user_client.withdrawals.list
 user_client.withdrawals.create(amount: "100", dest: "0x已验证钱包地址")
 user_client.event_logs.list(round_id)
+
+# 本人账本分录流（只读， newest first）：
+# => { "entries" => [{ "id", "asset", "amount", "balance_after", "created_at",
+#                      "ledger_transaction" => { "id", "type", "reference" } }],
+#      "meta" => { "page", "per_page", "total" } }
+user_client.me.ledger_entries(asset: "points", page: 1, per_page: 20)
 ```
 
 SIWE 钱包登录/绑定的完整流程（三处入口契约一致）：

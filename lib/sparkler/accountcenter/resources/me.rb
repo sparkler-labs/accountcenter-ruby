@@ -46,6 +46,22 @@ module Sparkler
         def delete_identity(id)
           request_delete("/api/v1/me/identities/#{URI.encode_www_form_component(id.to_s)}")
         end
+
+        # GET /api/v1/me/ledger_entries — the calling user's own ledger entry
+        # stream (Bearer user JWT), newest first. Read-only: an unknown asset
+        # code raises 422 unknown_asset, and a user without an account for the
+        # asset gets an empty list (no lazy account creation).
+        #
+        # @param asset [String] asset code, default "points"
+        # @param page [Integer] 1-based page index, default 1
+        # @param per_page [Integer] page size, default 20, capped at 100 by the platform
+        # @return [Hash] raw parsed JSON: { "entries" => [...], "meta" => { page, per_page, total } }
+        def ledger_entries(asset: "points", page: 1, per_page: 20)
+          request_get(
+            "/api/v1/me/ledger_entries",
+            query: { asset: asset, page: page, per_page: per_page }
+          )
+        end
       end
     end
   end

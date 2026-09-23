@@ -18,7 +18,7 @@ module Sparkler
     # the `idempotency_key:` keyword) that is reused verbatim across attempts.
     class Client
       attr_reader :auth, :game_tokens, :me, :withdrawals, :leaderboard, :event_logs,
-                  :holds, :settlements, :balances
+                  :holds, :settlements, :balances, :transfers
 
       # @param base_url [String] platform base URL, e.g. "https://api.example.com"
       # @param client_id [String, nil] doorkeeper client id (service funds mode)
@@ -86,6 +86,7 @@ module Sparkler
         @holds = Resources::Holds.new(self)
         @settlements = Resources::Settlements.new(self)
         @balances = Resources::Balances.new(self)
+        @transfers = Resources::Transfers.new(self)
       end
 
       def perform_with_auth(method, path, body: nil, query: nil, idempotency_key: nil, bearer: nil)

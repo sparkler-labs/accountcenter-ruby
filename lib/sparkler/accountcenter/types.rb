@@ -79,6 +79,21 @@ module Sparkler
         extend Parseable
       end
 
+      # Same-application peer-to-peer transfer (type=transfer ledger transaction
+      # doubles as the document; `id` is the ledger transaction id).
+      Transfer = Struct.new(:id, :reference, :asset, :amount, :from_user, :to_user,
+                            :details, :ledger_transaction, :created_at,
+                            keyword_init: true) do
+        extend Parseable
+
+        def self.from_h(hash)
+          parsed = super
+          txn = parsed.ledger_transaction
+          parsed.ledger_transaction = LedgerTransactionSummary.from_h(txn) if txn.is_a?(Hash)
+          parsed
+        end
+      end
+
       # Claims of a verified RS256 game ticket (see TicketVerifier).
       TicketClaims = Struct.new(:iss, :sub, :aud, :iat, :exp, :jti, :session_id,
                                 :address, :player_id, :nickname, :flag_style, :balance,

@@ -18,6 +18,7 @@ require_relative "accountcenter/resources/event_logs"
 require_relative "accountcenter/resources/holds"
 require_relative "accountcenter/resources/settlements"
 require_relative "accountcenter/resources/balances"
+require_relative "accountcenter/resources/transfers"
 require_relative "accountcenter/client"
 
 # Official Ruby SDK for the Sparkler AccountCenter public game platform.
